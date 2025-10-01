@@ -1,0 +1,379 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grandeur of Kerala Sadhya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&family=Noto+Sans+Malayalam:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FEFBF6;
+        }
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .malayalam-font {
+            font-family: 'Noto Sans Malayalam', sans-serif;
+        }
+        .sadhya-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        .banana-leaf {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #348a47, #48b86e, #348a47);
+            border-radius: 10% 50% / 50% 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid #2a6f3a;
+        }
+        .leaf-vein {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(-50%);
+        }
+        .dish-item {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .dish-item:hover {
+            transform: scale(1.2);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        .dish-item.active {
+            transform: scale(1.1);
+            border-color: #FFD700;
+            border-width: 4px;
+        }
+        .dish-name-tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 20;
+            bottom: 125%; 
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            width: 120px;
+            pointer-events: none;
+        }
+        .dish-item:hover .dish-name-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        #info-panel {
+            position: absolute;
+            top: 50%;
+            right: 5%;
+            width: 32%;
+            max-width: 380px;
+            height: 90%;
+            max-height: 540px;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 1.5rem;
+            overflow-y: auto;
+            z-index: 5;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #info-panel.is-updating {
+            opacity: 0;
+        }
+        .lang-switcher button.active {
+            font-weight: bold;
+            color: #3A5A40;
+            text-decoration: underline;
+        }
+        .info-image-placeholder {
+            width: 100%;
+            height: 128px; /* h-32 */
+            border-radius: 0.5rem; /* rounded-lg */
+            margin-bottom: 1rem; /* mb-4 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-[#FEFBF6] text-gray-800 p-4 sm:p-6 lg:p-8">
+
+    <div class="container mx-auto max-w-7xl">
+        <div class="lang-switcher text-center mb-4 text-gray-500">
+            <button id="lang-en" class="px-2 active" onclick="setLanguage('en')">English</button>|
+            <button id="lang-ml" class="px-2 malayalam-font" onclick="setLanguage('ml')">മലയാളം</button>
+        </div>
+
+        <header class="text-center mb-8">
+            <h1 id="main-title" class="title-font text-4xl md:text-6xl font-bold text-[#3A5A40]">The Grandeur of Kerala Sadhya</h1>
+            <p id="main-subtitle" class="mt-2 text-lg text-gray-600">An Interactive Culinary Journey</p>
+        </header>
+
+        <section class="max-w-4xl mx-auto bg-white/50 p-4 rounded-lg mb-8 text-center border border-gray-200">
+            <h2 id="etiquette-title" class="font-bold text-[#3A5A40] text-xl mb-2 malayalam-font">Sadhya Etiquette & Layout</h2>
+            <p id="etiquette-text" class="text-sm text-gray-600 malayalam-font">The banana leaf is placed with its tapering end to the left. Dishes are served on the top half, starting with pickles on the far left. The main course, rice, occupies the bottom center. This arrangement ensures a balanced tasting experience, moving from tangy starters to savory curries and finally to the sweet dessert.</p>
+        </section>
+
+        <main class="sadhya-container">
+            <div class="banana-leaf">
+                <div class="leaf-vein"></div>
+            </div>
+            
+            <aside id="info-panel">
+                <div id="info-content" class="text-center">
+                    <!-- Initial welcome message -->
+                </div>
+            </aside>
+            <!-- Dish items will be dynamically inserted into the main container -->
+        </main>
+    </div>
+
+    <script>
+        const uiText = {
+            en: { title: 'The Grandeur of Kerala Sadhya', subtitle: 'An Interactive Culinary Journey', etiquetteTitle: 'Sadhya Etiquette & Layout', etiquetteText: 'The banana leaf is placed with its tapering end to the left. Dishes are served on the top half, starting with pickles on the far left. The main course, rice, occupies the bottom center. This arrangement ensures a balanced tasting experience, moving from tangy starters to savory curries and finally to the sweet dessert.', instruction: 'Click on a dish to learn more about it!', welcomeTitle: 'Welcome!', welcomeText: 'The Kerala Sadhya is a vegetarian feast of epic proportions. It represents the rich culture, history, and culinary heritage of Kerala.', welcomeInstruction: 'Select any dish on the leaf to begin your discovery.', placementHeader: 'Placement on Leaf', historyHeader: 'History & Significance', prepHeader: 'Preparation', factHeader: 'Fun Fact' },
+            ml: { title: 'കേരള സദ്യയുടെ മഹത്വം', subtitle: 'ഒരു സംവേദനാത്മക പാചക യാത്ര', etiquetteTitle: 'സദ്യ മര്യാദകളും വിന്യാസവും', etiquetteText: 'വാഴയിലയുടെ കൂർത്ത ഭാഗം ഇടതുവശത്ത് വരുന്ന രീതിയിലാണ് ഇല വയ്ക്കുന്നത്. വിഭവങ്ങൾ മുകൾ ഭാഗത്ത് ഇടതുവശത്തുനിന്നും അച്ചാറുകളിൽ തുടങ്ങി വിളമ്പുന്നു. പ്രധാന വിഭവമായ ചോറ് താഴെ നടുവിലായാണ് വിളമ്പുന്നത്. ഈ ക്രമീകരണം രുചികളുടെ ഒരു സന്തുലിതമായ അനുഭവം ഉറപ്പാക്കുന്നു.', instruction: 'വിഭവങ്ങളെക്കുറിച്ച് കൂടുതൽ അറിയാൻ അതിൽ ക്ലിക്ക് ചെയ്യുക!', welcomeTitle: 'സ്വാഗതം!', welcomeText: 'കേരള സദ്യ, ഇലയിൽ വിളമ്പുന്ന വിഭവസമൃദ്ധമായ ഒരു സസ്യാഹാരമാണ്. ഇത് കേരളത്തിൻ്റെ സമ്പന്നമായ സംസ്കാരത്തെയും ചരിത്രത്തെയും പാചക പാരമ്പര്യത്തെയും പ്രതിനിധീകരിക്കുന്നു.', welcomeInstruction: 'നിങ്ങളുടെ യാത്ര ആരംഭിക്കാൻ ഇലയിലെ ഏതെങ്കിലും ഒരു വിഭവത്തിൽ ക്ലിക്ക് ചെയ്യുക.', placementHeader: 'ഇലയിലെ സ്ഥാനം', historyHeader: 'ചരിത്രവും പ്രാധാന്യവും', prepHeader: 'തയ്യാറാക്കുന്ന വിധം', factHeader: 'രസകരമായ വസ്തുത' }
+        };
+
+        const sadhyaDishesEN = [
+            { id: 'salt', name: 'Uppu', position: { top: '20%', left: '2%' }, color: '#e9ecef', textColor: '#333333', placementRule: 'A pinch of salt is the very first item served on the top-left corner.', description: 'A small mound of salt.', history: 'Represents the most basic and essential of tastes. It is served first as a symbolic start.', prep: 'Plain table salt or sea salt.', funFact: 'Adding extra salt is often considered an insult to the chef, implying the food is not well-seasoned.' },
+            { id: 'upperi', name: 'Upperi', position: { top: '35%', left: '3%' }, color: '#fee440', textColor: '#333333', placementRule: 'Served right next to the salt on the top left.', description: 'Crispy banana chips.', history: 'Kerala is famous for its Nendran bananas, perfect for making chips.', prep: 'Thinly sliced raw Nendran bananas are deep-fried in coconut oil.', funFact: 'The chips are often fried twice for extra crispiness!' },
+            { id: 'sharkara_varatti', name: 'Sharkara Varatti', position: { top: '50%', left: '4%' }, color: '#723d25', textColor: '#FFFFFF', placementRule: 'Placed next to the Upperi.', description: 'Banana chips coated in jaggery.', history: 'This sweet and spicy delicacy is a must-have for festivals like Onam.', prep: 'Thick banana pieces are fried, then coated in a syrup of melted jaggery and spices.', funFact: 'The spicy kick comes from dried ginger powder.' },
+            { id: 'pappadam', name: 'Pappadam', position: { top: '65%', left: '5%' }, color: '#f5f3f0', textColor: '#333333', placementRule: 'Served on the far left, ready to be crushed over rice.', description: 'A light, crispy wafer made from lentil flour.', history: 'Pappadams add a crunchy texture to every South Indian meal.', prep: 'Dried pappadam discs are deep-fried in hot oil until they puff up.', funFact: 'A smaller version called "kondattam" is also sometimes served.' },
+            { id: 'pazham', name: 'Pazham', position: { top: '80%', left: '6%' }, color: '#f7b731', textColor: '#333333', placementRule: 'A small, ripe banana is placed on the far left to be eaten with the payasam or at the end.', description: 'A small ripe banana.', history: 'Bananas are abundant in Kerala and are an integral part of the cuisine, both ripe and raw.', prep: 'Served as is.', funFact: 'Mashing the banana with pappadam and payasam is a popular way to enjoy the dessert course.' },
+            { id: 'manga_achar', name: 'Manga Achar', position: { top: '10%', left: '10%' }, color: '#fca311', textColor: '#333333', placementRule: 'Pickles are on the top left. Mango pickle is a classic.', description: 'Spicy and sour raw mango pickle.', history: 'Mango pickle is a staple in almost every Indian household, with regional variations.', prep: 'Raw mango pieces are mixed with chili powder, mustard seeds, fenugreek, and salt, and preserved in oil.', funFact: 'The sourness of the mango pickle helps to cut through the richness of the curries.' },
+            { id: 'naranga_achar', name: 'Naranga Achar', position: { top: '10%', left: '18%' }, color: '#f4a261', textColor: '#333333', placementRule: 'Served next to the mango pickle.', description: 'A tangy and spicy lemon pickle.', history: 'Pickling has been a traditional method of food preservation in Kerala for centuries.', prep: 'Lemons are cut and mixed with spices, then matured in oil.', funFact: 'The saltiness aids in digestion.' },
+            { id: 'inji_puli', name: 'Inji Puli', position: { top: '10%', left: '26%' }, color: '#e76f51', textColor: '#FFFFFF', placementRule: 'This chutney is a key part of the top-left assortment.', description: 'A sweet, sour, and spicy chutney.', history: 'Also known as "Puliinji," its flavors deepen over time.', prep: 'Finely chopped ginger is sautéed and cooked with tamarind pulp, jaggery, and green chilies.', funFact: 'Inji Puli is said to be equivalent to 101 curries in flavor!' },
+            { id: 'kichadi', name: 'Kichadi', position: { top: '10%', left: '34%' }, color: '#a7c957', textColor: '#333333', placementRule: 'Part of the top row of side dishes.', description: 'Yogurt-based curry with cucumber or bitter gourd in mustard-coconut paste.', history: 'Kichadi is distinguished from Pachadi by its use of ground mustard seeds.', prep: 'Cooked vegetables mixed into a blend of yogurt, ground coconut, and mustard seeds.', funFact: 'Provides a cooling contrast to spicier dishes.' },
+            { id: 'pachadi', name: 'Pachadi', position: { top: '10%', left: '42%' }, color: '#ffafcc', textColor: '#333333', placementRule: 'Served next to Kichadi in the top row.', description: 'A sweet and sour yogurt dish, often with pineapple or beetroot.', history: 'Showcases the skill of balancing sweet, sour, and spicy flavors.', prep: 'Cooked fruit/vegetable mixed with a coconut paste and combined with yogurt.', funFact: 'Pineapple Pachadi is a festive favorite.' },
+            { id: 'thoran', name: 'Thoran', position: { top: '10%', left: '50%' }, color: '#80b918', textColor: '#FFFFFF', placementRule: 'A dry vegetable dish, occupying a central spot in the top row of accompaniments.', description: 'Stir-fried chopped vegetables (e.g., cabbage) with coconut.', history: 'A versatile everyday dish in Kerala, made with almost any vegetable.', prep: 'Vegetables are sautéed with mustard seeds and curry leaves, then mixed with grated coconut.', funFact: 'The key is to keep the vegetables crunchy.' },
+            { id: 'avial', name: 'Avial', position: { top: '25%', left: '55%' }, color: '#f1faee', textColor: '#333333', placementRule: 'A major side dish, served in the top row, usually the largest portion among the sides.', description: 'A thick mix of vegetables in a coconut and yogurt gravy.', history: 'Legend says it was invented by Bhima during the Pandavas\' exile.', prep: 'Vegetables are cut into thick strips and cooked with coconut, green chilies, and yogurt.', funFact: 'Finished with a drizzle of fresh coconut oil for a unique aroma.' },
+            { id: 'erissery', name: 'Erissery', position: { top: '25%', left: '15%' }, color: '#f8ad4b', textColor: '#333333', placementRule: 'Another main side dish in the top row.', description: 'A thick curry of pumpkin, black-eyed peas, and roasted coconut.', history: 'A traditional dish, especially for Onam, known for its hearty texture.', prep: 'Pumpkin and peas are cooked, then mixed with a ground coconut paste and topped with roasted coconut.', funFact: 'The fried coconut garnish adds a delightful crunch and aroma.' },
+            { id: 'koottukari', name: 'Koottukari', position: { top: '25%', left: '25%' }, color: '#c58943', textColor: '#FFFFFF', placementRule: 'A rich, semi-dry curry served in the top row.', description: 'A spicy curry of raw banana, yam, and black chickpeas with roasted coconut.', history: 'The name "Koottukari" means "curry made with a mix," referring to the blend of vegetables.', prep: 'Vegetables and chickpeas are cooked with spices and finished with a flavorful roasted coconut paste.', funFact: 'It is one of the spicier side dishes in a typical sadhya.' },
+            { id: 'mezhukkupuratti', name: 'Mezhukkupuratti', position: { top: '25%', left: '35%' }, color: '#a47449', textColor: '#FFFFFF', placementRule: 'A stir-fried dish, usually placed on the top right.', description: 'A simple vegetable stir-fry with spices, without coconut.', history: '"Mezhukkupuratti" translates to "coated in oil," referring to the cooking style.', prep: 'Vegetables like raw banana or yardlong beans are slow-cooked or stir-fried in oil with turmeric and other spices.', funFact: 'Unlike Thoran, this dish highlights the natural flavor of the vegetable with minimal additions.' },
+            { id: 'olan', name: 'Olan', position: { top: '25%', left: '45%' }, color: '#f8f9fa', textColor: '#333333', placementRule: 'This mild curry is placed on the top right to balance the meal.', description: 'A mild curry of ash gourd, peas, and coconut milk.', history: 'Olan represents the simple, clean flavors of Kerala cuisine.', prep: 'Vegetables are simmered in thin coconut milk, then finished with thick coconut milk and coconut oil.', funFact: 'It gets its very mild heat only from a single slit green chili.' },
+            { id: 'rice', name: 'Rice', position: { top: '65%', left: '35%' }, color: '#ffffff', textColor: '#333333', placementRule: 'Served on the lower, wider half of the leaf, providing ample space for mixing with curries.', description: 'The centerpiece, usually "Matta" rice.', history: 'Rice is the staple of every Kerala meal.', prep: 'Boiled until soft and served generously.', funFact: 'It is customary to be served a second or third helping of rice.' },
+            { id: 'ghee', name: 'Neyy', position: { top: '55%', left: '20%' }, color: '#fde047', textColor: '#333333', placementRule: 'A spoonful is poured directly into the well made in the rice for the Parippu curry.', description: 'Clarified butter.', history: 'Ghee is considered sattvic (pure) in Ayurveda and is believed to aid digestion.', prep: 'Made by simmering unsalted butter until the milk solids separate.', funFact: 'The aroma of hot ghee on rice and dal is a quintessential part of the sadhya experience.' },
+            { id: 'parippu', name: 'Parippu', position: { top: '55%', left: '28%' }, color: '#fcf300', textColor: '#333333', placementRule: 'The first curry to be mixed with rice.', description: 'A simple, comforting lentil curry.', history: 'Traditionally the first curry served to start the meal.', prep: 'Cooked moong dal is mashed and seasoned with a coconut paste.', funFact: 'The meal officially begins once parippu is served.' },
+            { id: 'sambar', name: 'Sambar', position: { top: '55%', left: '38%' }, color: '#c95d2c', textColor: '#FFFFFF', placementRule: 'The second main liquid curry, served after Parippu.', description: 'A flavorful lentil and vegetable stew.', history: 'Kerala Sambar often has a hint of sweetness from jaggery.', prep: 'Toor dal and vegetables are cooked with tamarind pulp and sambar powder.', funFact: 'Over a dozen vegetables can be used in a single Sambar preparation.' },
+            { id: 'kalan', name: 'Kalan', position: { top: '55%', left: '48%' }, color: '#fff2b2', textColor: '#333333', placementRule: 'A thick curry, served either on the rice or on the side.', description: 'A sour curry with yogurt, coconut, and yam or raw banana.', history: 'A staple of the Travancore region, known for its long shelf life.', prep: 'Vegetable cooked with turmeric and pepper, then mixed with a thick yogurt-coconut paste.', funFact: 'Its flavor improves a day after it\'s made.' },
+            { id: 'pulissery', name: 'Pulissery', position: { top: '55%', left: '58%' }, color: '#fef08a', textColor: '#333333', placementRule: 'A thinner, yogurt-based curry served towards the end of the main course.', description: 'A tangy and spiced buttermilk or yogurt curry.', history: 'A lighter alternative to Kalan, often made with cucumber or ash gourd.', prep: 'A simple curry made by simmering vegetables in seasoned buttermilk or yogurt.', funFact: 'It acts as a coolant and aids in digestion after the heavy meal.' },
+            { id: 'rasam', name: 'Rasam', position: { top: '80%', left: '40%' }, color: '#d9480f', textColor: '#FFFFFF', placementRule: 'The final savory liquid course, served after Sambar to cleanse the palate.', description: 'A thin, tangy, and peppery soup.', history: 'Rasam is a digestive aid in South Indian cuisine, valued for its medicinal properties.', prep: 'A tamarind-based broth cooked with tomatoes, pepper, cumin, and other spices.', funFact: 'Rasam can also be drunk directly from a cup as a soup.' },
+            { id: 'palada_payasam', name: 'Palada', position: { top: '80%', left: '20%' }, color: '#fff5e6', textColor: '#333333', placementRule: 'The dessert is served on the bottom left, sometimes after cleaning a part of the leaf.', description: 'A rich, creamy dessert of rice flakes (ada), milk, and sugar.', history: 'Palada is one of the most beloved and essential payasams in a sadhya.', prep: 'Rice ada is cooked in slowly reduced milk until thick and creamy.', funFact: 'The pinkish hue of a traditional palada comes from caramelizing the milk sugars by slow cooking for hours.' },
+            { id: 'parippu_pradhaman', name: 'Parippu Pradhaman', position: { top: '80%', left: '30%' }, color: '#e6a353', textColor: '#333333', placementRule: 'Often served as a second payasam.', description: 'A sweet lentil porridge with jaggery and coconut milk.', history: 'One of the oldest and most traditional pradhamans.', prep: 'Cooked moong dal is mashed and simmered in jaggery syrup and coconut milk.', funFact: 'The addition of fried coconut bits and cashews provides a wonderful texture.' },
+            { id: 'cabbage_thoran', name: 'Cabbage Thoran', position: { top: '40%', left: '50%' }, color: '#d8f3dc', textColor: '#333333', placementRule: 'Top row, next to other thorans.', description: 'A simple and popular version of thoran made with cabbage.', history: 'Cabbage was introduced to India by the Portuguese and has been adapted into local cuisines.', prep: 'Finely shredded cabbage is stir-fried with a coconut and green chili mixture.', funFact: 'It\'s one of the quickest thorans to prepare.' },
+            { id: 'beetroot_pachadi', name: 'Beetroot Pachadi', position: { top: '40%', left: '18%' }, color: '#e599f1', textColor: '#FFFFFF', placementRule: 'Adds a vibrant color to the top row of accompaniments.', description: 'A sweet and earthy pachadi with a beautiful pink color.', history: 'Beetroot pachadi is a more modern addition to the sadhya, loved for its color and taste.', prep: 'Cooked and grated beetroot is mixed into a seasoned yogurt and coconut base.', funFact: 'Its striking color makes the sadhya leaf look even more festive.' },
+            { id: 'thiyal', name: 'Thiyal', position: { top: '40%', left: '28%' }, color: '#9a6a49', textColor: '#FFFFFF', placementRule: 'A dark, rich curry served on the top row.', description: 'A mixed vegetable curry in a roasted coconut gravy.', history: 'Thiyal is known for its deep brown color and complex flavor from thoroughly roasted coconut and spices.', prep: 'Coconut is roasted until very dark brown and ground with spices to form a paste, which forms the gravy base.', funFact: 'The name "Thiyal" refers to the "burnt" or roasted flavor of the coconut.' },
+            { id: 'sambaram', name: 'Sambaram', position: { top: '80%', left: '50%' }, color: '#e9f5db', textColor: '#333333', placementRule: 'Served in a glass alongside the meal to drink.', description: 'Spiced buttermilk.', history: 'A traditional refreshing drink in Kerala, especially during hot weather.', prep: 'Buttermilk is mixed with crushed ginger, green chilies, and curry leaves.', funFact: 'Sambaram is an excellent digestive and helps to cool the body.' },
+            { id: 'chammanthi', name: 'Chammanthi', position: { top: '40%', left: '10%' }, color: '#f4e2c2', textColor: '#333333', placementRule: 'A small portion is served with the pickles.', description: 'A thick coconut chutney.', history: 'A simple, versatile chutney that can be made with various ingredients.', prep: 'Grated coconut is ground with shallots, ginger, tamarind, and red chilies.', funFact: 'This is a dry chutney, unlike many other gravy-based dishes.' },
+        ];
+        
+        const sadhyaDishesML = [
+            { id: 'salt', name: 'ഉപ്പ്', position: { top: '20%', left: '2%' }, color: '#e9ecef', textColor: '#333333', placementRule: 'ഇലയുടെ മുകളിൽ ഇടതുവശത്ത് ആദ്യമായി ഒരു നുള്ള് ഉപ്പ് വിളമ്പുന്നു.', description: 'ഒരു ചെറിയ കൂന ഉപ്പ്.', history: 'രുചികളിൽ ഏറ്റവും അടിസ്ഥാനപരവും അത്യന്താപേക്ഷിതവുമാണ് ഉപ്പ്. ഒരു പ്രതീകാത്മക തുടക്കമെന്ന നിലയിൽ ഇതാണ് ആദ്യം വിളമ്പുന്നത്.', prep: 'സാധാരണ ഉപ്പ് അല്ലെങ്കിൽ കടലിൽ നിന്നുള്ള ഉപ്പ്.', funFact: 'വിളമ്പിയ കറികളിൽ ഉപ്പ് കുറവാണെന്ന് സൂചിപ്പിക്കുന്നതിനാൽ, അധികമായി ഉപ്പ് ചേർക്കുന്നത് പാചകക്കാരനെ അപമാനിക്കുന്നതിന് തുല്യമായി കണക്കാക്കപ്പെടുന്നു.' },
+            { id: 'upperi', name: 'ഉപ്പേരി', position: { top: '35%', left: '3%' }, color: '#fee440', textColor: '#333333', placementRule: 'ഇലയുടെ മുകളിൽ ഇടതുവശത്ത് ഉപ്പിന് അടുത്തായി വിളമ്പുന്നു.', description: 'മൊരിഞ്ഞ വാഴക്കാ ചിപ്‌സ്.', history: 'ചിപ്‌സ് ഉണ്ടാക്കാൻ അനുയോജ്യമായ നേന്ത്രക്കായ്ക്ക് പേരുകേട്ടതാണ് കേരളം.', prep: 'നേർത്തതായി അരിഞ്ഞ പച്ച നേന്ത്രക്കായ വെളിച്ചെണ്ണയിൽ വറുത്തെടുക്കുന്നു.', funFact: 'കൂടുതൽ മൊരിഞ്ഞു കിട്ടാൻ വേണ്ടി ചിപ്‌സ് പലപ്പോഴും രണ്ടുതവണ വറുക്കാറുണ്ട്.' },
+            { id: 'sharkara_varatti', name: 'ശർക്കര വരട്ടി', position: { top: '50%', left: '4%' }, color: '#723d25', textColor: '#FFFFFF', placementRule: 'ഉപ്പേരിക്ക് അടുത്തായി വിളമ്പുന്നു.', description: 'ശർക്കരയിൽ പൊതിഞ്ഞ വാഴക്കാ കഷണങ്ങൾ.', history: 'ഓണം പോലുള്ള ഉത്സവങ്ങൾക്ക് ഒഴിച്ചുകൂടാനാവാത്ത ഒരു മധുര പലഹാരമാണിത്.', prep: 'കട്ടിയുള്ള വാഴക്കാ കഷണങ്ങൾ വറുത്തതിനുശേഷം ശർക്കര, ചുക്ക്, മറ്റു സുഗന്ധവ്യഞ്ജനങ്ങൾ എന്നിവയുടെ മിശ്രിതത്തിൽ പൊതിഞ്ഞെടുക്കുന്നു.', funFact: 'ഇതിലെ എരിവ് വരുന്നത് ചുക്ക് പൊടിയിൽ നിന്നാണ്.' },
+            { id: 'pappadam', name: 'പപ്പടം', position: { top: '65%', left: '5%' }, color: '#f5f3f0', textColor: '#333333', placementRule: 'ഇടതുവശത്ത് വിളമ്പി, ചോറിൽ പൊടിച്ചു ചേർക്കാൻ തയ്യാറാക്കി വെക്കുന്നു.', description: 'പരിപ്പ് മാവ് കൊണ്ടുണ്ടാക്കിയ കനം കുറഞ്ഞതും മൊരിഞ്ഞതുമായ ഒരു പലഹാരം.', history: 'ദക്ഷിണേന്ത്യൻ ഭക്ഷണത്തിൽ പപ്പടത്തിന് ഒരു പ്രധാന സ്ഥാനമുണ്ട്.', prep: 'ഉണങ്ങിയ പപ്പടം ചൂടുള്ള എണ്ണയിൽ വറുത്തെടുക്കുമ്പോൾ അത് വീർത്തുവരുന്നു.', funFact: 'ഇതിൻ്റെ ചെറിയ രൂപമായ "കൊണ്ടാട്ടവും" ചിലപ്പോൾ വിളമ്പാറുണ്ട്.' },
+            { id: 'pazham', name: 'പഴം', position: { top: '80%', left: '6%' }, color: '#f7b731', textColor: '#333333', placementRule: 'ഇടതുവശത്ത് വിളമ്പുന്ന ഒരു ചെറിയ പഴം, പായസത്തോടൊപ്പം അല്ലെങ്കിൽ അവസാനമായി കഴിക്കാൻ.', description: 'ഒരു ചെറിയ പഴുത്ത പഴം.', history: 'കേരളത്തിൽ വാഴപ്പഴം സുലഭമാണ്, പഴുത്തതും പച്ചയും പാചകത്തിൽ ഒരുപോലെ ഉപയോഗിക്കുന്നു.', prep: 'അതുപോലെ തന്നെ വിളമ്പുന്നു.', funFact: 'പഴം പപ്പടവും പായസവും ചേർത്ത് കുഴച്ച് കഴിക്കുന്നത് ഒരു ജനപ്രിയ രീതിയാണ്.' },
+            { id: 'manga_achar', name: 'മാങ്ങാ അച്ചാർ', position: { top: '10%', left: '10%' }, color: '#fca311', textColor: '#333333', placementRule: 'അച്ചാറുകൾ മുകളിൽ ഇടതുവശത്താണ് വിളമ്പുന്നത്. മാങ്ങാ അച്ചാർ ഒരു പ്രധാനിയാണ്.', description: 'പുളിയും എരിവുമുള്ള പച്ചമാങ്ങാ അച്ചാർ.', history: 'പ്രാദേശിക വ്യത്യാസങ്ങളോടെ മിക്കവാറും എല്ലാ ഇന്ത്യൻ വീടുകളിലെയും ഒരു പ്രധാന വിഭവമാണ് മാങ്ങാ അച്ചാർ.', prep: 'പച്ചമാങ്ങ കഷണങ്ങൾ മുളകുപൊടി, കടുക്, ഉലുവ, ഉപ്പ് എന്നിവ ചേർത്ത് എണ്ണയിൽ സൂക്ഷിക്കുന്നു.', funFact: 'മാങ്ങാ അച്ചാറിൻ്റെ പുളിപ്പ് കറികളുടെ കൊഴുപ്പിനെ ಸಮീകരിക്കുന്നു.' },
+            { id: 'naranga_achar', name: 'നാരങ്ങാ അച്ചാർ', position: { top: '10%', left: '18%' }, color: '#f4a261', textColor: '#333333', placementRule: 'മാങ്ങാ അച്ചാറിന് അടുത്തായി വിളമ്പുന്നു.', description: 'പുളിയും എരിവുമുള്ള നാരങ്ങാ അച്ചാർ.', history: 'കേരളത്തിൽ ഭക്ഷണം കേടുകൂടാതെ സൂക്ഷിക്കാനുള്ള ഒരു പരമ്പരാഗത രീതിയായിരുന്നു അച്ചാറിടൽ.', prep: 'നാരങ്ങ കഷണങ്ങളാക്കി സുഗന്ധവ്യഞ്ജങ്ങളുമായി ചേർത്ത് എണ്ണയിൽ സൂക്ഷിക്കുന്നു.', funFact: 'ഇതിലെ ഉപ്പുരസം ദഹനത്തിന് സഹായിക്കുന്നു.' },
+            { id: 'inji_puli', name: 'ഇഞ്ചിപ്പുളി', position: { top: '10%', left: '26%' }, color: '#e76f51', textColor: '#FFFFFF', placementRule: 'ഈ ചമ്മന്തി മുകളിൽ ഇടതുവശത്തെ വിഭവങ്ങളിൽ പ്രധാനപ്പെട്ടതാണ്.', description: 'മധുരവും പുളിയും എരിവുമുള്ള ഒരു ചമ്മന്തി.', history: 'പുളിയിഞ്ചി എന്നും അറിയപ്പെടുന്നു, ഇത് കാലം ചെല്ലുന്തോറും രുചി കൂടുന്നു.', prep: 'ചെറുതായി അരിഞ്ഞ ഇഞ്ചി വഴറ്റിയ ശേഷം പുളിവെള്ളം, ശർക്കര, പച്ചമുളക് എന്നിവ ചേർത്ത് വേവിക്കുന്നു.', funFact: 'രുചിയുടെ കാര്യത്തിൽ ഇഞ്ചിപ്പുളി 101 കറികൾക്ക് തുല്യമാണെന്ന് പറയപ്പെടുന്നു!' },
+            { id: 'kichadi', name: 'കിച്ചടി', position: { top: '10%', left: '34%' }, color: '#a7c957', textColor: '#333333', placementRule: 'മുകളിലെ നിരയിലെ സൈഡ് ഡിഷുകളുടെ ഭാഗം.', description: 'അരച്ച കടുകും തേങ്ങയും ചേർത്ത തൈര് അടിസ്ഥാനമാക്കിയുള്ള വെള്ളരിക്ക അല്ലെങ്കിൽ പാവയ്ക്ക കറി.', history: 'അരച്ച കടുക് ഉപയോഗിക്കുന്നതാണ് കിച്ചടിയെ പച്ചടിയിൽ നിന്ന് വ്യത്യസ്തമാക്കുന്നത്.', prep: 'വേവിച്ച പച്ചക്കറികൾ തൈര്, അരച്ച തേങ്ങ, കടുക് എന്നിവയുടെ മിശ്രിതത്തിൽ ചേർക്കുന്നു.', funFact: 'എരിവുള്ള വിഭവങ്ങൾക്ക് ഒരു തണുത്ത പ്രതീതി നൽകുന്നു.' },
+            { id: 'pachadi', name: 'പച്ചടി', position: { top: '10%', left: '42%' }, color: '#ffafcc', textColor: '#333333', placementRule: 'കിച്ചടിക്ക് അടുത്തായി മുകളിലെ നിരയിൽ വിളമ്പുന്നു.', description: 'മധുരവും പുളിയുമുള്ള ഒരു തൈര് വിഭവം, സാധാരണയായി പൈനാപ്പിൾ അല്ലെങ്കിൽ ബീറ്റ്റൂട്ട് ഉപയോഗിച്ച് ഉണ്ടാക്കുന്നു.', history: 'മധുരം, പുളി, എരിവ് എന്നീ രുചികൾ ഒരു വിഭവത്തിൽ ಸಮീകരിക്കുന്നതിലെ വൈദഗ്ദ്ധ്യം ഇത് കാണിക്കുന്നു.', prep: 'വേവിച്ച പഴം/പച്ചക്കറി തേങ്ങാ അരപ്പും തൈരും ചേർത്ത് യോജിപ്പിക്കുന്നു.', funFact: 'പൈനാപ്പിൾ പച്ചടി അതിൻ്റെ രുചി കാരണം ആഘോഷവേളകളിൽ പ്രിയപ്പെട്ടതാണ്.' },
+            { id: 'thoran', name: 'തോരൻ', position: { top: '10%', left: '50%' }, color: '#80b918', textColor: '#FFFFFF', placementRule: 'മുകളിലെ നിരയിലെ ഒരു പ്രധാനപ്പെട്ട ഉണങ്ങിയ പച്ചക്കറി വിഭവം.', description: 'ചെറുതായി അരിഞ്ഞ പച്ചക്കറികൾ (ഉദാ: കാബേജ്) തേങ്ങ ചേർത്ത് വഴറ്റിയത്.', history: 'കേരളത്തിലെ ഒരു സാധാരണ വിഭവമാണ് തോരൻ, ഇത് മിക്കവാറും എല്ലാ പച്ചക്കറികളും ഉപയോഗിച്ച് ഉണ്ടാക്കാം.', prep: 'പച്ചക്കറികൾ കടുകും കറിവേപ്പിലയും ചേർത്ത് വഴറ്റി, തേങ്ങ ചിരകിയത് ചേർത്ത് യോജിപ്പിക്കുന്നു.', funFact: 'പച്ചക്കറികൾ അധികം വേവിക്കാതെ, അതിൻ്റെ സ്വാഭാവികത നിലനിർത്തുക എന്നതാണ് പ്രധാനം.' },
+            { id: 'avial', name: 'അവിയൽ', position: { top: '25%', left: '55%' }, color: '#f1faee', textColor: '#333333', placementRule: 'മുകളിലെ നിരയിൽ വിളമ്പുന്ന ഒരു പ്രധാന സൈഡ് ഡിഷ്.', description: 'പലതരം പച്ചക്കറികൾ തേങ്ങയും തൈരും ചേർത്ത ചാറിൽ വേവിച്ചെടുത്ത കട്ടിയുള്ള ഒരു മിശ്രിതം.', history: 'പാണ്ഡവരുടെ വനവാസകാലത്ത് ഭീമനാണ് അവിയൽ കണ്ടുപിടിച്ചതെന്ന് ഒരു ഐതിഹ്യമുണ്ട്.', prep: 'പച്ചക്കറികൾ കട്ടിയുള്ള കഷണങ്ങളായി മുറിച്ച് തേങ്ങ, പച്ചമുളക്, തൈര് എന്നിവ ചേർത്ത് വേവിക്കുന്നു.', funFact: 'അവസാനം അല്പം പച്ച വെളിച്ചെണ്ണ ചേർക്കുന്നത് ഇതിന് ഒരു പ്രത്യേക സുഗന്ധം നൽകുന്നു.' },
+            { id: 'erissery', name: 'എരിശ്ശേരി', position: { top: '25%', left: '15%' }, color: '#f8ad4b', textColor: '#333333', placementRule: 'മുകളിലെ നിരയിലെ മറ്റൊരു പ്രധാന സൈഡ് ഡിഷ്.', description: 'മത്തങ്ങ, വൻപയർ, വറുത്ത തേങ്ങ എന്നിവ ചേർത്ത ഒരു കട്ടിയുള്ള കറി.', history: 'ഓണത്തിന് പ്രത്യേകമായി ഉണ്ടാക്കുന്ന ഒരു പരമ്പരാഗത വിഭവം.', prep: 'മത്തങ്ങയും പയറും വേവിച്ച്, തേങ്ങാ അരപ്പിൽ കലർത്തി, വറുത്ത തേങ്ങ കൊണ്ട് അലങ്കരിക്കുന്നു.', funFact: 'വറുത്ത തേങ്ങയുടെ മൊരിഞ്ഞ രുചിയും സുഗന്ധവും ഇതിന് ഒരു പ്രത്യേകതയാണ്.' },
+            { id: 'koottukari', name: 'കൂട്ടുകറി', position: { top: '25%', left: '25%' }, color: '#c58943', textColor: '#FFFFFF', placementRule: 'മുകളിലെ നിരയിൽ വിളമ്പുന്ന ഒരു റിച്ച്, സെമി-ഡ്രൈ കറി.', description: 'പച്ചക്കായ, ചേന, കടല എന്നിവ വറുത്തരച്ച തേങ്ങ ചേർത്ത് ഉണ്ടാക്കുന്ന എരിവുള്ള കറി.', history: '"കൂട്ടുകറി" എന്ന പേരിനർത്ഥം "കലർത്തിയ കറി" എന്നാണ്.', prep: 'പച്ചക്കറികളും കടലയും സുഗന്ധവ്യഞ്ജനങ്ങൾ ചേർത്ത് വേവിച്ച്, വറുത്തരച്ച തേങ്ങ ചേർത്ത് പൂർത്തിയാക്കുന്നു.', funFact: 'സദ്യയിലെ എരിവുള്ള സൈഡ് ഡിഷുകളിൽ ഒന്നാണിത്.' },
+            { id: 'mezhukkupuratti', name: 'മെഴുക്കുപുരട്ടി', position: { top: '25%', left: '35%' }, color: '#a47449', textColor: '#FFFFFF', placementRule: 'മുകളിൽ വലതുവശത്ത് വിളമ്പുന്ന ഒരു വിഭവം.', description: 'തേങ്ങ ചേർക്കാതെ സുഗന്ധവ്യഞ്ജനങ്ങൾ ചേർത്ത് വഴറ്റിയ ഒരു ലളിതമായ പച്ചക്കറി വിഭവം.', history: '"മെഴുക്കുപുരട്ടി" എന്നതിനർത്ഥം "എണ്ണയിൽ പൊതിഞ്ഞത്" എന്നാണ്.', prep: 'പച്ചക്കായ അല്ലെങ്കിൽ പയർ പോലുള്ള പച്ചക്കറികൾ എണ്ണയിൽ മഞ്ഞൾപ്പൊടിയും മറ്റ് സുഗന്ധവ്യഞ്ജങ്ങളും ചേർത്ത് വേവിച്ചെടുക്കുന്നു.', funFact: 'തോരനിൽ നിന്ന് വ്യത്യസ്തമായി, ഈ വിഭവം പച്ചക്കറിയുടെ സ്വാഭാവിക രുചിക്ക് പ്രാധാന്യം നൽകുന്നു.' },
+            { id: 'olan', name: 'ഓലൻ', position: { top: '25%', left: '45%' }, color: '#f8f9fa', textColor: '#333333', placementRule: 'മുകളിൽ വലതുവശത്ത് വിളമ്പുന്ന ഈ വിഭവം മറ്റ് രുചികളെ ಸಮീകരിക്കുന്നു.', description: 'കുമ്പളങ്ങ, പയർ, തേങ്ങാപ്പാൽ എന്നിവ ചേർത്ത ഒരു ലളിതമായ കറി.', history: 'ഓലൻ കേരളീയ പാചകരീതിയുടെ ലളിതമായ രുചികളെ പ്രതിനിധീകരിക്കുന്നു.', prep: 'പച്ചക്കറികൾ നേർത്ത തേങ്ങാപ്പാലിൽ വേവിച്ച്, കട്ടിയുള്ള തേങ്ങാപ്പാലും വെളിച്ചെണ്ണയും ചേർത്ത് പൂർത്തിയാക്കുന്നു.', funFact: 'ഒരു പച്ചമുളകിൽ നിന്നുള്ള ചെറിയ എരിവ് മാത്രമേ ഇതിനുള്ളൂ.' },
+            { id: 'rice', name: 'ചോറ്', position: { top: '65%', left: '35%' }, color: '#ffffff', textColor: '#333333', placementRule: 'ഇലയുടെ താഴത്തെ പകുതിയിൽ, കറികളുമായി കലർത്താൻ ധാരാളം സ്ഥലം നൽകി വിളമ്പുന്നു.', description: 'പ്രധാന വിഭവം, സാധാരണയായി "മട്ട അരി".', history: 'എല്ലാ കേരളീയ ഭക്ഷണത്തിൻ്റെയും അടിസ്ഥാനം ചോറാണ്.', prep: 'നന്നായി വേവിച്ച് ഇലയിൽ ധാരാളമായി വിളമ്പുന്നു.', funFact: 'രണ്ടാമതും മൂന്നാമതും ചോറ് വിളമ്പുന്നത് ഒരു ആചാരമാണ്.' },
+            { id: 'ghee', name: 'നെയ്യ്', position: { top: '55%', left: '20%' }, color: '#fde047', textColor: '#333333', placementRule: 'ചോറിൽ പരിപ്പ് കറിക്കായി ഉണ്ടാക്കിയ കുഴിയിൽ ഒരു സ്പൂൺ നെയ്യ് ഒഴിക്കുന്നു.', description: 'ശുദ്ധീകരിച്ച വെണ്ണ.', history: 'ആയുർവേദത്തിൽ നെയ്യ് സാത്വികമായി കണക്കാക്കപ്പെടുന്നു, ഇത് ദഹനത്തെ സഹായിക്കുമെന്ന് വിശ്വസിക്കുന്നു.', prep: 'ഉപ്പില്ലാത്ത വെണ്ണ ഉരുക്കി വേർതിരിച്ചെടുക്കുന്നു.', funFact: 'ചൂടുള്ള ചോറിലും പരിപ്പിലും നെയ്യിൻ്റെ സുഗന്ധം സദ്യയുടെ ഒരു പ്രധാന ഭാഗമാണ്.' },
+            { id: 'parippu', name: 'പരിപ്പ്', position: { top: '55%', left: '28%' }, color: '#fcf300', textColor: '#333333', placementRule: 'ചോറിൽ ആദ്യം ചേർക്കുന്ന കറി.', description: 'ഒരു ലളിതവും സ്വാദിഷ്ടവുമായ പരിപ്പ് കറി.', history: 'പരമ്പരാഗതമായി ഭക്ഷണം ആരംഭിക്കാൻ വിളമ്പുന്ന ആദ്യത്തെ കറിയാണിത്.', prep: 'വേവിച്ച ചെറുപയർ പരിപ്പ് ഉടച്ച് തേങ്ങാ അരപ്പിൽ ചേർക്കുന്നു.', funFact: 'പരിപ്പ് വിളമ്പിക്കഴിഞ്ഞാണ് സദ്യ ഔദ്യോഗികമായി ആരംഭിക്കുന്നത്.' },
+            { id: 'sambar', name: 'സാമ്പാർ', position: { top: '55%', left: '38%' }, color: '#c95d2c', textColor: '#FFFFFF', placementRule: 'പരിപ്പിന് ശേഷം വിളമ്പുന്ന രണ്ടാമത്തെ പ്രധാന കറി.', description: 'രുചികരമായ ഒരു പരിപ്പ്-പച്ചക്കറി കറി.', history: 'കേരള സാമ്പാറിന് പലപ്പോഴും ശർക്കരയിൽ നിന്ന് ഒരു ചെറിയ മധുരം ഉണ്ടാകും.', prep: 'തുവരപ്പരിപ്പും പച്ചക്കറികളും പുളിവെള്ളത്തിലും സാമ്പാർ പൊടിയിലും വേവിച്ചെടുക്കുന്നു.', funFact: 'ഒരു സാമ്പാറിന് പത്തിലധികം പച്ചക്കറികൾ ഉപയോഗിക്കാം.' },
+            { id: 'kalan', name: 'കാളൻ', position: { top: '55%', left: '48%' }, color: '#fff2b2', textColor: '#333333', placementRule: 'ചോറിൻ്റെ മുകളിലോ വശത്തോ വിളമ്പുന്ന ഒരു കട്ടിയുള്ള കറി.', description: 'തൈരും തേങ്ങയും ചേനയോ പച്ചക്കായയോ ചേർത്ത ഒരു പുളിയുള്ള കറി.', history: 'തിരുവിതാംകൂർ മേഖലയിലെ ഒരു പ്രധാന വിഭവം, ഇത് കൂടുതൽ കാലം കേടുകൂടാതെയിരിക്കും.', prep: 'പച്ചക്കറി മഞ്ഞൾപ്പൊടിയും കുരുമുളകും ചേർത്ത് വേവിച്ച്, കട്ടിയുള്ള തൈര്-തേങ്ങാ മിശ്രിതത്തിൽ ചേർക്കുന്നു.', funFact: 'ഉണ്ടാക്കിയതിൻ്റെ അടുത്ത ദിവസം ഇതിന് രുചി കൂടും.' },
+            { id: 'pulissery', name: 'പുളിശ്ശേരി', position: { top: '55%', left: '58%' }, color: '#fef08a', textColor: '#333333', placementRule: 'പ്രധാന ഭക്ഷണത്തിൻ്റെ അവസാന ഭാഗത്ത് വിളമ്പുന്ന നേർത്ത തൈര് അടിസ്ഥാനമാക്കിയുള്ള കറി.', description: 'പുളിയുള്ളതും മസാലകൾ ചേർത്തതുമായ മോര് അല്ലെങ്കിൽ തൈര് കറി.', history: 'കാളന് ഒരു ലളിതമായ ബദൽ, പലപ്പോഴും വെള്ളരിക്ക അല്ലെങ്കിൽ കുമ്പളങ്ങ ഉപയോഗിച്ച് ഉണ്ടാക്കുന്നു.', prep: 'പച്ചക്കറികൾ താളിച്ച മോരിൽ അല്ലെങ്കിൽ തൈരിൽ വേവിച്ച് ഉണ്ടാക്കുന്ന ഒരു ലളിതമായ കറി.', funFact: 'ഇത് ശരീരത്തിന് തണുപ്പ് നൽകുകയും ദഹനത്തിന് സഹായിക്കുകയും ചെയ്യുന്നു.' },
+            { id: 'rasam', name: 'രസം', position: { top: '80%', left: '40%' }, color: '#d9480f', textColor: '#FFFFFF', placementRule: 'സാമ്പാറിന് ശേഷം വിളമ്പുന്ന അവസാനത്തെ കറി, ഇത് വായ ശുദ്ധിയാക്കുന്നു.', description: 'കനം കുറഞ്ഞ, പുളിയും കുരുമുളകിൻ്റെ എരിവുമുള്ള ഒരു സൂപ്പ്.', history: 'രസം ദക്ഷിണേന്ത്യൻ പാചകത്തിലെ ഒരു ദഹനസഹായിയാണ്.', prep: 'പുളിവെള്ളത്തിൽ തക്കാളി, കുരുമുളക്, ജീരകം എന്നിവ ചേർത്ത് തിളപ്പിക്കുന്നു.', funFact: 'രസം ഒരു കപ്പിൽ സൂപ്പായി നേരിട്ട് കുടിക്കാനും കഴിയും.' },
+            { id: 'palada_payasam', name: 'പാലട', position: { top: '80%', left: '20%' }, color: '#fff5e6', textColor: '#333333', placementRule: 'ഇലയുടെ ഒരു ഭാഗം വൃത്തിയാക്കിയ ശേഷം താഴെ വലതുവശത്ത് വിളമ്പുന്നു.', description: 'അട, പാൽ, പഞ്ചസാര എന്നിവകൊണ്ടുണ്ടാക്കിയ ക്രീമിയായ ഒരു മധുരപലഹാരം.', history: 'സദ്യയിലെ ഏറ്റവും പ്രിയപ്പെട്ടതും അത്യാവശ്യവുമായ പായസങ്ങളിൽ ഒന്നാണ് പാലട.', prep: 'അട പതുക്കെ കുറുക്കിയെടുത്ത പാലിൽ വേവിച്ച് എടുക്കുന്നു.', funFact: 'പരമ്പരാഗത പാലടയുടെ പിങ്ക് നിറം വരുന്നത് മണിക്കൂറുകളോളം പാൽ പതുക്കെ കുറുക്കിയെടുക്കുമ്പോഴാണ്.' },
+            { id: 'parippu_pradhaman', name: 'പരിപ്പ് പ്രഥമൻ', position: { top: '80%', left: '30%' }, color: '#e6a353', textColor: '#333333', placementRule: 'പലപ്പോഴും രണ്ടാമത്തെ പായസമായി വിളമ്പുന്നു.', description: 'ശർക്കരയും തേങ്ങാപ്പാലും ചേർത്ത ഒരു മധുരമുള്ള പരിപ്പ് പായസം.', history: 'ഏറ്റവും പഴക്കം ചെന്നതും പരമ്പരാഗതവുമായ പ്രഥമനുകളിൽ ഒന്ന്.', prep: 'വേവിച്ച ചെറുപയർ പരിപ്പ് ശർക്കര പാനിയിലും തേങ്ങാപ്പാലിലും വേവിച്ചെടുക്കുന്നു.', funFact: 'വറുത്ത തേങ്ങാക്കൊത്തും കശുവണ്ടിയും ഇതിന് ഒരു പ്രത്യേക രുചി നൽകുന്നു.' },
+            { id: 'cabbage_thoran', name: 'കാബേജ് തോരൻ', position: { top: '40%', left: '50%' }, color: '#d8f3dc', textColor: '#333333', placementRule: 'മുകളിൽ വലതുവശത്ത്, മറ്റ് തോരനുകൾക്കൊപ്പം.', description: 'കാബേജ് ഉപയോഗിച്ച് ഉണ്ടാക്കുന്ന ഒരു ലളിതവും ജനപ്രിയവുമായ തോരൻ.', history: 'പോർച്ചുഗീസുകാരാണ് കാബേജ് ഇന്ത്യയിൽ കൊണ്ടുവന്നത്, പിന്നീട് ഇത് പ്രാദേശിക പാചകരീതികളുമായി ഇണങ്ങിച്ചേർന്നു.', prep: 'ചെറുതായി അരിഞ്ഞ കാബേജ് തേങ്ങയും പച്ചമുളകും ചേർത്ത മിശ്രിതത്തിൽ വഴറ്റിയെടുക്കുന്നു.', funFact: 'ഇത് വളരെ വേഗത്തിൽ തയ്യാറാക്കാൻ കഴിയുന്ന ഒരു തോരനാണ്.' },
+            { id: 'beetroot_pachadi', name: 'ബീറ്റ്റൂട്ട് പച്ചടി', position: { top: '40%', left: '18%' }, color: '#e599f1', textColor: '#FFFFFF', placementRule: 'മുകളിലെ നിരയിലെ വിഭവങ്ങൾക്ക് മനോഹരമായ ഒരു നിറം നൽകുന്നു.', description: 'മനോഹരമായ പിങ്ക് നിറമുള്ള മധുരമുള്ള ഒരു പച്ചടി.', history: 'ബീറ്റ്റൂട്ട് പച്ചടി സദ്യയിലെ ഒരു പുതിയ കൂട്ടിച്ചേർക്കലാണ്.', prep: 'വേവിച്ചതും അരച്ചതുമായ ബീറ്റ്റൂട്ട് താളിച്ച തൈര്-തേങ്ങാ മിശ്രിതത്തിൽ ചേർക്കുന്നു.', funFact: 'അതിൻ്റെ ആകർഷകമായ നിറം സദ്യ ഇലയെ കൂടുതൽ മനോഹരമാക്കുന്നു.' },
+            { id: 'thiyal', name: 'തീയൽ', position: { top: '40%', left: '28%' }, color: '#9a6a49', textColor: '#FFFFFF', placementRule: 'മുകളിലെ നിരയിൽ വിളമ്പുന്ന കടുത്ത നിറമുള്ള ഒരു കറി.', description: 'വറുത്തരച്ച തേങ്ങ ചേർത്ത ഒരു മിക്സഡ് വെജിറ്റബിൾ കറി.', history: 'കടും തവിട്ടുനിറത്തിനും വറുത്ത തേങ്ങയുടെയും സുഗന്ധവ്യഞ്ജനങ്ങളുടെയും സങ്കീർണ്ണമായ രുചിക്കും പേരുകേട്ടതാണ് തീയൽ.', prep: 'തേങ്ങ കടും തവിട്ടുനിറമാകുന്നതുവരെ വറുത്ത് സുഗന്ധവ്യഞ്ജനങ്ങൾ ചേർത്ത് അരച്ചെടുക്കുന്നു.', funFact: '"തീയൽ" എന്ന പേര് തേങ്ങയുടെ "കരിഞ്ഞ" അല്ലെങ്കിൽ വറുത്ത രുചിയെ സൂചിപ്പിക്കുന്നു.' },
+            { id: 'sambaram', name: 'സംഭാരം', position: { top: '80%', left: '50%' }, color: '#e9f5db', textColor: '#333333', placementRule: 'ഭക്ഷണത്തോടൊപ്പം കുടിക്കാൻ ഒരു ഗ്ലാസ്സിൽ വിളമ്പുന്നു.', description: 'മസാലകൾ ചേർത്ത മോര്.', history: 'കേരളത്തിലെ ഒരു പരമ്പരാഗത പാനീയം, പ്രത്യേകിച്ച് ചൂടുകാലത്ത്.', prep: 'മോരിൽ ചതച്ച ഇഞ്ചി, പച്ചമുളക്, കറിവേപ്പില എന്നിവ ചേർക്കുന്നു.', funFact: 'സംഭാരം ഒരു മികച്ച ദഹനസഹായിയാണ്, ഇത് ശരീരത്തെ തണുപ്പിക്കുന്നു.' },
+            { id: 'chammanthi', name: 'ചമ്മന്തി', position: { top: '40%', left: '10%' }, color: '#f4e2c2', textColor: '#333333', placementRule: 'അച്ചാറുകൾക്കൊപ്പം ഒരു ചെറിയ അളവിൽ വിളമ്പുന്നു.', description: 'ഒരു കട്ടിയുള്ള തേങ്ങാ ചമ്മന്തി.', history: 'വിവിധ ചേരുവകൾ ഉപയോഗിച്ച് ഉണ്ടാക്കാവുന്ന ലളിതമായ ഒരു ചമ്മന്തി.', prep: 'ചിരകിയ തേങ്ങ ചെറിയ ഉള്ളി, ഇഞ്ചി, പുളി, മുളക് എന്നിവ ചേർത്ത് അരച്ചെടുക്കുന്നു.', funFact: 'ഇത് മറ്റ് കറികൾ പോലെ ചാറില്ലാത്ത ഒരു ഉണങ്ങിയ ചമ്മന്തിയാണ്.' },
+        ];
+
+
+        let currentLanguage = 'en';
+
+        const mainContainer = document.querySelector('.sadhya-container');
+        const infoPanel = document.getElementById('info-panel');
+        const infoContent = document.getElementById('info-content');
+
+        function getDishData() {
+            return currentLanguage === 'en' ? sadhyaDishesEN : sadhyaDishesML;
+        }
+
+        function createDishItems() {
+            mainContainer.querySelectorAll('.dish-item').forEach(el => el.remove());
+            const dishes = getDishData();
+
+            dishes.forEach(dish => {
+                const item = document.createElement('div');
+                item.className = 'dish-item';
+                item.id = dish.id;
+                item.style.top = dish.position.top;
+                item.style.left = dish.position.left;
+                item.style.backgroundColor = dish.color;
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = dish.name.split(' ')[0];
+                nameSpan.style.color = dish.textColor;
+                if(currentLanguage === 'ml') {
+                    nameSpan.classList.add('malayalam-font');
+                }
+                item.appendChild(nameSpan);
+
+                const tooltip = document.createElement('span');
+                tooltip.className = `dish-name-tooltip ${currentLanguage === 'ml' ? 'malayalam-font' : ''}`;
+                tooltip.textContent = dish.name;
+                item.appendChild(tooltip);
+
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    displayDishInfo(dish.id);
+                });
+                mainContainer.appendChild(item);
+            });
+        }
+
+        function displayDishInfo(dishId) {
+            const dishes = getDishData();
+            const dish = dishes.find(d => d.id === dishId);
+            if (!dish) return;
+
+            infoPanel.classList.add('is-updating');
+            
+            setTimeout(() => {
+                const textData = uiText[currentLanguage];
+                
+                infoContent.innerHTML = `
+                    <div class="info-image-placeholder ${currentLanguage === 'ml' ? 'malayalam-font' : ''}" style="background-color: ${dish.color}; color: ${dish.textColor};">
+                        ${dish.name}
+                    </div>
+                    <h2 class="title-font text-2xl font-bold text-[#3A5A40] ${currentLanguage === 'ml' ? 'malayalam-font' : ''}">${dish.name}</h2>
+                    <p class="mt-1 text-gray-700 text-sm ${currentLanguage === 'ml' ? 'malayalam-font' : ''}">${dish.description}</p>
+                    
+                    <div class="text-left mt-4 space-y-3 text-sm ${currentLanguage === 'ml' ? 'malayalam-font' : ''}">
+                        <div>
+                            <h3 class="font-bold text-base text-[#3A5A40]">${textData.placementHeader}</h3>
+                            <p class="text-gray-600">${dish.placementRule}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base text-[#3A5A40]">${textData.historyHeader}</h3>
+                            <p class="text-gray-600">${dish.history}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base text-[#3A5A40]">${textData.prepHeader}</h3>
+                            <p class="text-gray-600">${dish.prep}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base text-[#3A5A40]">${textData.factHeader}</h3>
+                            <p class="text-gray-600">${dish.funFact}</p>
+                        </div>
+                    </div>
+                `;
+                infoPanel.classList.remove('is-updating');
+            }, 150);
+            
+            document.querySelectorAll('.dish-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(dishId).classList.add('active');
+        }
+        
+        function setWelcomeMessage() {
+            const textData = uiText[currentLanguage];
+            infoContent.innerHTML = `
+                <div class="flex flex-col justify-center h-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0c-.523 0-1.046.151-1.5.454a2.707 2.707 0 01-1.5-.454M21 15.546v-5.546a3 3 0 00-3-3h-9a3 3 0 00-3 3v5.546c.523 0 1.046-.151 1.5-.454a2.707 2.707 0 011.5.454c.523 0 1.046-.151 1.5-.454a2.707 2.707 0 011.5.454c.523 0 1.046-.151 1.5-.454a2.707 2.707 0 011.5.454c.523 0 1.046-.151 1.5-.454a2.707 2.707 0 011.5.454c.523 0 1.046-.151 1.5-.454a2.704 2.704 0 003 0c.454.303.977.454 1.5.454z" /></svg>
+                    <h2 class="title-font text-2xl font-bold mt-4 text-[#3A5A40] ${currentLanguage === 'ml' ? 'malayalam-font' : ''}">${textData.welcomeTitle}</h2>
+                    <p class="mt-2 text-gray-600 ${currentLanguage === 'ml' ? 'malayalam-font' : ''}">${textData.welcomeText}</p>
+                    <p class="mt-4 text-sm text-gray-500 ${currentLanguage === 'ml' ? 'malayalam-font' : ''}">${textData.welcomeInstruction}</p>
+                </div>
+            `;
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            const textData = uiText[lang];
+
+            document.getElementById('main-title').textContent = textData.title;
+            document.getElementById('main-subtitle').textContent = textData.subtitle;
+            document.getElementById('etiquette-title').textContent = textData.etiquetteTitle;
+            document.getElementById('etiquette-text').textContent = textData.etiquetteText;
+            
+            document.querySelectorAll('#main-title, #main-subtitle, #etiquette-title, #etiquette-text, #instruction-text').forEach(el => {
+                if (lang === 'ml') el.classList.add('malayalam-font');
+                else el.classList.remove('malayalam-font');
+            });
+
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            document.getElementById('lang-ml').classList.toggle('active', lang === 'ml');
+
+            createDishItems();
+            setWelcomeMessage();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage('en');
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
